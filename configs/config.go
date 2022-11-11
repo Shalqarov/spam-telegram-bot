@@ -7,7 +7,7 @@ import (
 type Config struct {
 	Env      string
 	BotToken string
-	Dns      string
+	Dsn      string
 }
 
 func NewConfig(configPath string) (*Config, error) {
