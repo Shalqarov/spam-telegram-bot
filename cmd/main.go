@@ -2,9 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/Shalqarov/spam-telegram-bot/configs"
-	"github.com/Shalqarov/spam-telegram-bot/internal/repository"
+	"github.com/Shalqarov/spam-telegram-bot/internal/repository/migrations"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 )
@@ -19,10 +18,9 @@ func main() {
 		log.Fatalf("Ошибка декодирования файла конфигов %v", err)
 	}
 
-	_, err = repository.SqliteMigration(cfg.Dsn)
+	db, err := migrations.SqliteMigration(cfg.Dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(cfg)
 }

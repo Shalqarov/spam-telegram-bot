@@ -1,4 +1,4 @@
-package repository
+package migrations
 
 import (
 	"database/sql"
@@ -28,7 +28,7 @@ func SqliteMigration(dsn string) (*sql.DB, error) {
 }
 
 func setup(db *sql.DB) error {
-	query, err := os.ReadFile("./internal/repository/migration.sql")
+	query, err := os.ReadFile("./internal/repository/migrations/migration.sql")
 
 	if err != nil {
 		return err

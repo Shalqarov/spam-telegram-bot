@@ -1,6 +1,8 @@
 package service
 
-import "github.com/Shalqarov/spam-telegram-bot/internal/models"
+import (
+	"github.com/Shalqarov/spam-telegram-bot/internal/repository/models"
+)
 
 type userService struct {
 	repo models.Repo
