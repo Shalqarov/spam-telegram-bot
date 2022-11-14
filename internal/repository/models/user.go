@@ -6,6 +6,7 @@ import (
 )
 
 type User struct {
+	sql.DB
 	Id          int64
 	Telegram_id int64  `json:"telegram_id"`
 	Username    string `json:"username"`
@@ -23,8 +24,12 @@ type Repo interface {
 	GetUserById(id int64) (*User, error)
 }
 
-func AddUser(user User, db *sql.DB) error {
-	_, err := db.Exec("insert into Users(telegram_id,username, firstName, lastName ) values(?,?,?,?)", user.Telegram_id, user.Username, user.FirstName, user.LastName)
+type UserModel struct {
+	DB *sql.DB
+}
+
+func (m *UserModel) AddUser(user User) error {
+	_, err := m.DB.Exec("insert into Users(telegram_id,username, firstName, lastName ) values(?,?,?,?)", user.Telegram_id, user.Username, user.FirstName, user.LastName)
 
 	if err != nil {
 		return err
@@ -33,11 +38,11 @@ func AddUser(user User, db *sql.DB) error {
 	return nil
 }
 
-func FindOne(userFind User, Db *sql.DB) (*User, error) {
+func (m *UserModel) FindOne(userFind User) (*User, error) {
 
 	user := User{}
 
-	err := Db.QueryRow("select * from Users where telegram_id=?", userFind.Telegram_id).Scan(&user.Id, &user.Telegram_id, &user.Username, &user.FirstName, &user.LastName)
+	err := m.DB.QueryRow("select * from Users where telegram_id=?", userFind.Telegram_id).Scan(&user.Id, &user.Telegram_id, &user.Username, &user.FirstName, &user.LastName)
 
 	if err != nil {
 		return nil, nil
@@ -46,9 +51,9 @@ func FindOne(userFind User, Db *sql.DB) (*User, error) {
 	return &user, err
 
 }
-func SelectAll(db *sql.DB) []User {
+func (m *UserModel) SelectAll() []User {
 	allUsers := []User{}
-	err, _ := db.Query("select * from Users")
+	err, _ := m.DB.Query("select * from Users")
 
 	for err.Next() {
 		var user User
