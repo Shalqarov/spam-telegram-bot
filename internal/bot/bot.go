@@ -2,10 +2,11 @@ package bot
 
 import (
 	"fmt"
-	"github.com/Shalqarov/spam-telegram-bot/internal/repository/models"
-	"gopkg.in/telebot.v3"
 	"log"
 	"time"
+
+	"github.com/Shalqarov/spam-telegram-bot/internal/repository/models"
+	"gopkg.in/telebot.v3"
 )
 
 type SpamBot struct {
@@ -15,23 +16,23 @@ type SpamBot struct {
 
 func (bot *SpamBot) StartHandler(ctx telebot.Context) error {
 	newUser := models.User{
-		Telegram_id: ctx.Chat().ID,
-		Username:    ctx.Sender().Username,
-		FirstName:   ctx.Sender().FirstName,
-		LastName:    ctx.Sender().LastName,
+		TelegramId: ctx.Chat().ID,
+		Username:   ctx.Sender().Username,
+		FirstName:  ctx.Sender().FirstName,
+		LastName:   ctx.Sender().LastName,
 	}
 
 	existUser, err := bot.User.FindOne(newUser)
-
 	if err != nil {
-		fmt.Errorf("Ошибка поиска юзера %v", err)
+		_ = fmt.Errorf("ошибка поиска юзера %v", err)
 	}
 
 	if existUser == nil {
+		fmt.Print("AAA")
 		err := bot.User.AddUser(newUser)
 
 		if err != nil {
-			fmt.Errorf("Ошибка создания юзера %v", err)
+			_ = fmt.Errorf("ошибка создания юзера %v", err)
 		}
 	}
 

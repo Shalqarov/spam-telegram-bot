@@ -2,12 +2,13 @@ package main
 
 import (
 	"flag"
+	"log"
+
 	"github.com/Shalqarov/spam-telegram-bot/configs"
 	"github.com/Shalqarov/spam-telegram-bot/internal/bot"
 	"github.com/Shalqarov/spam-telegram-bot/internal/repository/migrations"
 	"github.com/Shalqarov/spam-telegram-bot/internal/repository/models"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 )
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 
 	spambot := bot.SpamBot{
 		Bot:  bot.InitBot(cfg.BotToken),
-		User: models.UserModel{db},
+		User: models.UserModel{DB: db},
 	}
 
 	spambot.Bot.Handle("/start", spambot.StartHandler)
