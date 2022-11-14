@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"flag"
 	"log"
+	"net/http"
+	"time"
 
 	"github.com/Shalqarov/spam-telegram-bot/configs"
 	"github.com/Shalqarov/spam-telegram-bot/internal/bot"
@@ -13,6 +15,7 @@ import (
 )
 
 func main() {
+	addr := flag.String("addr", ":5000", "Network address HTTP")
 	configPath := flag.String("config", "local.toml", "Path to config file")
 	flag.Parse()
 
@@ -33,13 +36,27 @@ func main() {
 		}
 	}(db)
 
-	spambot := bot.SpamBot{
+	spambot := &bot.SpamBot{
 		Bot:  bot.InitBot(cfg.BotToken),
 		User: models.UserModel{DB: db},
 	}
 
+	router := http.NewServeMux()
+	bot.SetRoutes(router, spambot)
+	srv := &http.Server{
+		Addr:         *addr,
+		Handler:      router,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  10 * time.Second,
+	}
+
 	spambot.Bot.Handle("/start", spambot.StartHandler)
-
+	go func() {
+		err := srv.ListenAndServe()
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	spambot.Bot.Start()
-
 }
