@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"log"
 
@@ -25,6 +26,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(db)
 
 	spambot := bot.SpamBot{
 		Bot:  bot.InitBot(cfg.BotToken),
