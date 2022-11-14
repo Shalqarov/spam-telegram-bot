@@ -3,9 +3,11 @@ package bot
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/Shalqarov/spam-telegram-bot/internal/repository/models"
+	"github.com/Shalqarov/spam-telegram-bot/internal/web"
 	"gopkg.in/telebot.v3"
 )
 
@@ -14,7 +16,37 @@ type SpamBot struct {
 	User models.UserModel
 }
 
-func (bot *SpamBot) StartHandler(ctx telebot.Context) error {
+func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(web.StatusMessage(http.StatusMethodNotAllowed))
+		return
+	}
+	users, err := b.User.SelectAll()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(web.StatusMessage(http.StatusInternalServerError))
+		return
+	}
+	for _, user := range users {
+		u := &telebot.User{
+			ID:        user.TelegramId,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Username:  user.Username,
+		}
+		_, err := b.Bot.Send(u, "Hello there")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write(web.StatusMessage(http.StatusInternalServerError))
+			return
+		}
+	}
+	w.Write(web.StatusMessage(200))
+}
+
+func (b *SpamBot) StartHandler(ctx telebot.Context) error {
 	newUser := models.User{
 		TelegramId: ctx.Chat().ID,
 		Username:   ctx.Sender().Username,
@@ -22,14 +54,13 @@ func (bot *SpamBot) StartHandler(ctx telebot.Context) error {
 		LastName:   ctx.Sender().LastName,
 	}
 
-	existUser, err := bot.User.FindOne(newUser)
+	existUser, err := b.User.FindOne(newUser)
 	if err != nil {
 		_ = fmt.Errorf("ошибка поиска юзера %v", err)
 	}
 
 	if existUser == nil {
-		fmt.Print("AAA")
-		err := bot.User.AddUser(newUser)
+		err := b.User.AddUser(newUser)
 
 		if err != nil {
 			_ = fmt.Errorf("ошибка создания юзера %v", err)
