@@ -5,6 +5,7 @@
 *.so
 *.dylib
 /.idea
+/.vscode
 *.toml
 !example.toml
 *.db
