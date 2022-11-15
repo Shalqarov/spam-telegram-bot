@@ -1,7 +1,9 @@
 package bot
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -16,6 +18,10 @@ type SpamBot struct {
 	User models.UserModel
 }
 
+type Message struct {
+	Message string `json:"message"`
+}
+
 func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
@@ -23,6 +29,13 @@ func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(web.StatusMessage(http.StatusMethodNotAllowed))
 		return
 	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return
+	}
+	var t Message
+	err = json.Unmarshal(body, &t)
+	//w.Write([]byte(t.Message))
 	users, err := b.User.SelectAll()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -36,7 +49,7 @@ func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 			LastName:  user.LastName,
 			Username:  user.Username,
 		}
-		_, err := b.Bot.Send(u, "Hello there")
+		_, err := b.Bot.Send(u, t.Message)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write(web.StatusMessage(http.StatusInternalServerError))
