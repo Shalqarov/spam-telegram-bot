@@ -52,6 +52,7 @@ func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(web.StatusMessage(http.StatusInternalServerError))
 		return
 	}
+
 	for _, user := range users {
 		u := &telebot.User{
 			ID:        user.TelegramId,
@@ -59,7 +60,7 @@ func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 			LastName:  user.LastName,
 			Username:  user.Username,
 		}
-		_, err := b.Bot.Send(u, t.Message)
+		_, err := b.Bot.Send(u, msg.Message)
 		if err != nil {
 			log.Println(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
