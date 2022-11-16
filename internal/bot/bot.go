@@ -3,7 +3,7 @@ package bot
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -29,8 +29,11 @@ func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(web.StatusMessage(http.StatusMethodNotAllowed))
 		return
 	}
-	body, err := ioutil.ReadAll(r.Body)
+
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(web.StatusMessage(http.StatusBadRequest))
 		return
 	}
 	var t Message
