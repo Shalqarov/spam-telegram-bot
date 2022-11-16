@@ -36,9 +36,15 @@ func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(web.StatusMessage(http.StatusBadRequest))
 		return
 	}
-	var t Message
-	err = json.Unmarshal(body, &t)
-	//w.Write([]byte(t.Message))
+
+	var msg Message
+	err = json.Unmarshal(body, &msg)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(web.StatusMessage(http.StatusBadRequest))
+		return
+	}
+
 	users, err := b.User.SelectAll()
 	if err != nil {
 		log.Println(err.Error())
