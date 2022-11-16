@@ -41,6 +41,7 @@ func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 	//w.Write([]byte(t.Message))
 	users, err := b.User.SelectAll()
 	if err != nil {
+		log.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write(web.StatusMessage(http.StatusInternalServerError))
 		return
@@ -54,6 +55,7 @@ func (b *SpamBot) SendHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		_, err := b.Bot.Send(u, t.Message)
 		if err != nil {
+			log.Println(err.Error())
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write(web.StatusMessage(http.StatusInternalServerError))
 			return
