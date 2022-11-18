@@ -4,6 +4,12 @@
 *.dll
 *.so
 *.dylib
+/.idea
+/.vscode
+*.toml
+!example.toml
+*.db
+
 
 # Test binary, built with `go test -c`
 *.test
