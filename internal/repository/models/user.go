@@ -43,11 +43,13 @@ func (m *UserModel) DeleteUser(telegramId int64) error {
 
 func (m *UserModel) SelectAll() ([]*User, error) {
 	var allUsers []*User
-	err, _ := m.DB.Query(`select * from users`)
-
-	for err.Next() {
+	rows, err := m.DB.Query(`select * from users`)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
 		user := &User{}
-		if err := err.Scan(&user.Id, &user.TelegramId, &user.Username, &user.FirstName, &user.LastName); err != nil {
+		if err := rows.Scan(&user.Id, &user.TelegramId, &user.Username, &user.FirstName, &user.LastName); err != nil {
 			return nil, err
 		}
 		allUsers = append(allUsers, user)

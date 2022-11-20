@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func StatusMessage(status int) []byte {
+func statusMessage(status int) []byte {
 	resp := make(map[string]string)
 	switch status {
 	case http.StatusOK:
