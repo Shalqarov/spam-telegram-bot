@@ -3,15 +3,16 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/Shalqarov/spam-telegram-bot/configs"
-	"github.com/Shalqarov/spam-telegram-bot/internal/bot"
-	"github.com/Shalqarov/spam-telegram-bot/internal/repository/migrations"
-	"github.com/Shalqarov/spam-telegram-bot/internal/repository/models"
 	_ "github.com/mattn/go-sqlite3"
+	"spam-telegram-bot/configs"
+	"spam-telegram-bot/internal/bot"
+	"spam-telegram-bot/internal/repository/migrations"
+	"spam-telegram-bot/internal/repository/models"
 )
 
 func main() {
@@ -29,12 +30,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
 	}(db)
+	fmt.Print(db)
 
 	spambot := &bot.SpamBot{
 		Bot:  bot.InitBot(cfg.BotToken),
