@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -29,12 +30,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
 	}(db)
+	fmt.Print(db)
 
 	spambot := &bot.SpamBot{
 		Bot:  bot.InitBot(cfg.BotToken),

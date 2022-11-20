@@ -86,7 +86,6 @@ func (b *SpamBot) StartHandler(ctx telebot.Context) error {
 
 	if existUser == nil {
 		err := b.User.AddUser(newUser)
-
 		if err != nil {
 			_ = fmt.Errorf("ошибка создания юзера %v", err)
 		}
