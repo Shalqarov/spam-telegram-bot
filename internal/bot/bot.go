@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Shalqarov/spam-telegram-bot/internal/repository/models"
-	"github.com/Shalqarov/spam-telegram-bot/internal/web"
 	"gopkg.in/telebot.v3"
+	"spam-telegram-bot/internal/repository/models"
+	"spam-telegram-bot/internal/web"
 )
 
 type SpamBot struct {
@@ -86,7 +86,6 @@ func (b *SpamBot) StartHandler(ctx telebot.Context) error {
 
 	if existUser == nil {
 		err := b.User.AddUser(newUser)
-
 		if err != nil {
 			_ = fmt.Errorf("ошибка создания юзера %v", err)
 		}
