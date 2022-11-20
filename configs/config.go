@@ -8,6 +8,7 @@ type Config struct {
 	Env      string
 	BotToken string
 	Dsn      string
+	Addr     string
 }
 
 func NewConfig(configPath string) (*Config, error) {
