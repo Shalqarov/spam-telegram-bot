@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Shalqarov/spam-telegram-bot/configs"
-	"github.com/Shalqarov/spam-telegram-bot/internal/bot"
-	"github.com/Shalqarov/spam-telegram-bot/internal/repository/migrations"
-	"github.com/Shalqarov/spam-telegram-bot/internal/repository/models"
 	_ "github.com/mattn/go-sqlite3"
+	"spam-telegram-bot/configs"
+	"spam-telegram-bot/internal/bot"
+	"spam-telegram-bot/internal/repository/migrations"
+	"spam-telegram-bot/internal/repository/models"
 )
 
 func main() {

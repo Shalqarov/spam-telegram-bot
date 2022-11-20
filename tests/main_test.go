@@ -3,11 +3,12 @@ package tests
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	"testing"
+
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/require"
-	"os"
 	"spam-telegram-bot/internal/repository/models"
-	"testing"
 )
 
 func TestAddUser(t *testing.T) {

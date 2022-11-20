@@ -4,7 +4,6 @@ go 1.18
 
 require (
 	github.com/BurntSushi/toml v1.2.1
-	github.com/Shalqarov/spam-telegram-bot v0.0.0-20221118065103-658101257b4d
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/stretchr/testify v1.8.1
 	gopkg.in/telebot.v3 v3.1.2
