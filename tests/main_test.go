@@ -12,22 +12,20 @@ import (
 )
 
 func TestAddUser(t *testing.T) {
-	require := require.New(t)
+	req := require.New(t)
 
 	db, err := sql.Open("sqlite3", "test.db")
 
-	if err != nil {
-		require.Equal(nil, err)
-	}
+	req.Equal(nil, err)
+
+	defer db.Close()
 
 	query, err := os.ReadFile("../internal/repository/migrations/migration.sql")
 
-	if err != nil {
-		require.Equal(nil, err)
-	}
+	req.Equal(nil, err)
 
 	if _, err := db.Exec(string(query)); err != nil {
-		require.Equal(nil, err)
+		req.Equal(nil, err)
 	}
 
 	model := models.UserModel{DB: db}
@@ -39,23 +37,41 @@ func TestAddUser(t *testing.T) {
 
 	err = model.AddUser(newUser)
 
-	if err != nil {
-		require.Equal(nil, err)
-	}
+	req.Equal(nil, err)
 
 	exist, err := model.FindOne(newUser)
 
-	if err != nil {
-		require.Equal(nil, err)
-	}
+	req.Equal(nil, err)
 
 	expected := fmt.Sprintf("telegram_id=%v, Username=%v", newUser.TelegramId, newUser.Username)
 	got := fmt.Sprintf("telegram_id=%v, Username=%v", exist.TelegramId, exist.Username)
-	require.Equal(expected, got)
+	req.Equal(expected, got)
 
 }
 
 func TestSelectAll(t *testing.T) {
-	file, _ := os.Open("test.db")
-	fmt.Print(file)
+	req := require.New(t)
+
+	db, err := sql.Open("sqlite3", "test.db")
+
+	req.Equal(nil, err)
+
+	defer db.Close()
+
+	model := models.UserModel{DB: db}
+
+	testUsers := []models.User{
+		models.User{
+			TelegramId: 8797,
+			Username:   "AbobaTest",
+		},
+	}
+
+	selectAllUsers, err := model.SelectAll()
+
+	req.Equal(nil, err)
+	req.Equal(testUsers[0].TelegramId, selectAllUsers[0].TelegramId)
+	req.Equal(testUsers[0].Username, selectAllUsers[0].Username)
+
+	_ = os.Remove("test.db")
 }
