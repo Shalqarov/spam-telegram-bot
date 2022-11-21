@@ -22,23 +22,17 @@ func (m *UserModel) AddUser(user User) error {
 }
 
 func (m *UserModel) FindOne(userFind User) (*User, error) {
-
 	user := User{}
-
 	err := m.DB.QueryRow(`select * from users where telegram_id=?`, userFind.TelegramId).Scan(&user.Id, &user.TelegramId, &user.Username, &user.FirstName, &user.LastName)
-
 	if err != nil {
 		return nil, err
 	}
-
 	return &user, nil
 }
 
 func (m *UserModel) DeleteUser(telegramId int64) error {
-
 	_, err := m.DB.Exec(`DELETE FROM users WHERE telegram_id=?`, telegramId)
 	return err
-
 }
 
 func (m *UserModel) SelectAll() ([]*User, error) {
@@ -54,6 +48,5 @@ func (m *UserModel) SelectAll() ([]*User, error) {
 		}
 		allUsers = append(allUsers, user)
 	}
-
 	return allUsers, nil
 }

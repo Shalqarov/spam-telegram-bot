@@ -25,6 +25,7 @@ type Message struct {
 func SetRoutes(r *http.ServeMux, h *Handler) {
 	r.HandleFunc("/api/send", h.SendHandler)
 	h.Bot.Handle("/start", h.StartHandler)
+	h.Bot.Handle("/delete", h.DeleteHandler)
 }
 
 func (h *Handler) SendHandler(w http.ResponseWriter, r *http.Request) {
@@ -109,4 +110,9 @@ func (h *Handler) StartHandler(ctx telebot.Context) error {
 	}
 
 	return ctx.Send("Привет " + ctx.Sender().FirstName)
+}
+
+func (h *Handler) DeleteHandler(context telebot.Context) error {
+	h.User.DeleteUser(context.Sender().ID)
+	return context.Send("Вы были удалены")
 }
