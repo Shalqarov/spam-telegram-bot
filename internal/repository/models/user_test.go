@@ -1,4 +1,4 @@
-package tests
+package models
 
 import (
 	"database/sql"
@@ -8,29 +8,24 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/require"
-	"spam-telegram-bot/internal/repository/models"
 )
 
 func TestAddUser(t *testing.T) {
 	req := require.New(t)
 
 	db, err := sql.Open("sqlite3", "test.db")
-
 	req.Equal(nil, err)
-
 	defer db.Close()
 
-	query, err := os.ReadFile("../internal/repository/migrations/migration.sql")
-
+	query, err := os.ReadFile("./../migrations/migration.sql")
 	req.Equal(nil, err)
-
 	if _, err := db.Exec(string(query)); err != nil {
 		req.Equal(nil, err)
 	}
 
-	model := models.UserModel{DB: db}
+	model := UserModel{DB: db}
 
-	newUser := models.User{
+	newUser := User{
 		TelegramId: 8797,
 		Username:   "AbobaTest",
 	}
@@ -58,10 +53,10 @@ func TestSelectAll(t *testing.T) {
 
 	defer db.Close()
 
-	model := models.UserModel{DB: db}
+	model := UserModel{DB: db}
 
-	testUsers := []models.User{
-		models.User{
+	testUsers := []User{
+		User{
 			TelegramId: 8797,
 			Username:   "AbobaTest",
 		},
