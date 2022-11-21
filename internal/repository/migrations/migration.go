@@ -6,7 +6,6 @@ import (
 )
 
 func SqliteMigration(dsn string) (*sql.DB, error) {
-
 	db, err := sql.Open("sqlite3", dsn)
 
 	if err != nil {
@@ -24,7 +23,6 @@ func SqliteMigration(dsn string) (*sql.DB, error) {
 	}
 
 	return db, nil
-
 }
 
 func setup(db *sql.DB) error {
