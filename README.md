@@ -4,9 +4,20 @@
 
 1.Скачиваем зависимости:
 
-```go mod tidy```
+```bash
+go mod tidy
+```
+2.Создаем бд->например:
+```bash
+example.db
+```
 
-2.Запускаем сервис:
+3.Настраиваем конфиг в example.toml
 
-```go run ./cmd [flags: --config, --addr]```
+
+4.Запускаем сервис:
+
+```bash
+go run ./cmd [flags: --config, --addr]
+```
 
