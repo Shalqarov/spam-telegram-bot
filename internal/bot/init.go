@@ -5,13 +5,7 @@ import (
 	"time"
 
 	"gopkg.in/telebot.v3"
-	"spam-telegram-bot/internal/repository/models"
 )
-
-type SpamBot struct {
-	Bot  *telebot.Bot
-	User models.UserModel
-}
 
 func InitBot(token string) *telebot.Bot {
 	pref := telebot.Settings{
@@ -20,11 +14,9 @@ func InitBot(token string) *telebot.Bot {
 			Timeout: 10 * time.Second,
 		},
 	}
-
 	b, err := telebot.NewBot(pref)
 	if err != nil {
 		log.Fatalf("Ошибка при инициализации бота %v", err)
 	}
-
 	return b
 }

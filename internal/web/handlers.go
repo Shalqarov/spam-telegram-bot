@@ -23,12 +23,38 @@ type Message struct {
 }
 
 func SetRoutes(r *http.ServeMux, h *Handler) {
-	r.HandleFunc("/api/send", h.SendHandler)
-	h.Bot.Handle("/start", h.StartHandler)
-	h.Bot.Handle("/delete", h.DeleteHandler)
+	r.HandleFunc("/api/send", h.Send)
+	h.Bot.Handle("/start", h.Start)
+	h.Bot.Handle("/delete", h.Delete)
 }
 
-func (h *Handler) SendHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Start(ctx telebot.Context) error {
+	newUser := models.User{
+		TelegramId: ctx.Chat().ID,
+		Username:   ctx.Sender().Username,
+		FirstName:  ctx.Sender().FirstName,
+		LastName:   ctx.Sender().LastName,
+	}
+
+	existUser, err := h.User.Find(newUser.TelegramId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			h.InfoLog.Printf("Пользователь не найден, запись в БД %s...", newUser.Username)
+		} else {
+			h.ErrorLog.Printf("Ошибка поиска юзера: %v", err.Error())
+			return nil
+		}
+	}
+	if existUser == nil {
+		err := h.User.Add(newUser)
+		if err != nil {
+			h.ErrorLog.Println("ошибка поиска юзера", err)
+		}
+	}
+	return ctx.Send("Привет " + ctx.Sender().FirstName)
+}
+
+func (h *Handler) Send(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -53,7 +79,7 @@ func (h *Handler) SendHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := h.User.SelectAll()
+	users, err := h.User.All()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			h.InfoLog.Println(err.Error())
@@ -85,34 +111,10 @@ func (h *Handler) SendHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(statusMessage(200))
 }
 
-func (h *Handler) StartHandler(ctx telebot.Context) error {
-	newUser := models.User{
-		TelegramId: ctx.Chat().ID,
-		Username:   ctx.Sender().Username,
-		FirstName:  ctx.Sender().FirstName,
-		LastName:   ctx.Sender().LastName,
-	}
-
-	existUser, err := h.User.FindOne(newUser)
+func (h *Handler) Delete(context telebot.Context) error {
+	err := h.User.Delete(context.Sender().ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			h.InfoLog.Printf("Пользователь не найден, запись в БД %s...", newUser.Username)
-		} else {
-			h.ErrorLog.Printf("Ошибка поиска юзера: %v", err.Error())
-			return nil
-		}
+		h.ErrorLog.Println("ошибка удаления юзера", err)
 	}
-	if existUser == nil {
-		err := h.User.AddUser(newUser)
-		if err != nil {
-			h.ErrorLog.Println("ошибка поиска юзера", err)
-		}
-	}
-
-	return ctx.Send("Привет " + ctx.Sender().FirstName)
-}
-
-func (h *Handler) DeleteHandler(context telebot.Context) error {
-	h.User.DeleteUser(context.Sender().ID)
 	return context.Send("Вы были удалены")
 }

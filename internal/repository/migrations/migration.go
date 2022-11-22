@@ -7,7 +7,6 @@ import (
 
 func SqliteMigration(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", dsn)
-
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +16,6 @@ func SqliteMigration(dsn string) (*sql.DB, error) {
 	}
 
 	err = setup(db)
-
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +25,6 @@ func SqliteMigration(dsn string) (*sql.DB, error) {
 
 func setup(db *sql.DB) error {
 	query, err := os.ReadFile("./internal/repository/migrations/migration.sql")
-
 	if err != nil {
 		return err
 	}
